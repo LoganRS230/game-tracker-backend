@@ -1,17 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const {
-  obtenerResenas,
-  obtenerResenaPorId,
   crearResena,
-  actualizarResena,
-  eliminarResena,
+  obtenerResenasPorJuego,
+  eliminarResena
 } = require('../controllers/resenasController');
 
-router.get('/', obtenerResenas);
-router.get('/:id', obtenerResenaPorId);
+// Rutas para reseñas
 router.post('/', crearResena);
-router.put('/:id', actualizarResena);
+router.get('/juego/:juegoId', obtenerResenasPorJuego);
 router.delete('/:id', eliminarResena);
 
 module.exports = router;

@@ -1,71 +1,89 @@
 const Resena = require('../models/Resena');
 
-// Obtener todas las reseñas
-const obtenerResenas = async (req, res) => {
-  try {
-    const resenas = await Resena.find();
-    res.json(resenas);
-  } catch (error) {
-    res.status(500).json({ mensaje: 'Error al obtener las reseñas' });
-  }
-};
-
-// Obtener una reseña por ID
-const obtenerResenaPorId = async (req, res) => {
-  try {
-    const resena = await Resena.findById(req.params.id);
-    if (!resena) {
-      return res.status(404).json({ mensaje: 'Reseña no encontrada' });
-    }
-    res.json(resena);
-  } catch (error) {
-    res.status(500).json({ mensaje: 'Error al obtener la reseña' });
-  }
-};
-
-// Crear una nueva reseña
 const crearResena = async (req, res) => {
   try {
-    const resena = new Resena(req.body);
-    await resena.save();
-    res.status(201).json(resena);
-  } catch (error) {
-    res.status(500).json({ mensaje: 'Error al crear la reseña' });
-  }
-};
+    const { juegoId, usuario, comentario, puntuacion } = req.body;
 
-// Actualizar una reseña
-const actualizarResena = async (req, res) => {
-  try {
-    const resena = await Resena.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-    if (!resena) {
-      return res.status(404).json({ mensaje: 'Reseña no encontrada' });
+    if (!juegoId || !usuario || !comentario || !puntuacion) {
+      return res.status(400).json({
+        success: false,
+        mensaje: 'Faltan campos obligatorios'
+      });
     }
-    res.json(resena);
+
+    if (puntuacion < 1 || puntuacion > 5) {
+      return res.status(400).json({
+        success: false,
+        mensaje: 'La puntuación debe estar entre 1 y 5'
+      });
+    }
+
+    const nuevaResena = new Resena({ juegoId, usuario, comentario, puntuacion });
+    const resenaGuardada = await nuevaResena.save();
+
+    res.status(201).json({
+      success: true,
+      data: resenaGuardada,
+      mensaje: 'Reseña creada correctamente'
+    });
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al actualizar la reseña' });
+    res.status(400).json({
+      success: false,
+      mensaje: 'Error al crear la reseña',
+      error: error.message
+    });
   }
 };
 
-// Eliminar una reseña
+
+const obtenerResenasPorJuego = async (req, res) => {
+  try {
+    const { juegoId } = req.params;
+    const resenas = await Resena.find({ juegoId });
+
+    res.json({
+      success: true,
+      data: resenas,
+      mensaje: 'Reseñas obtenidas correctamente'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      mensaje: 'Error al obtener reseñas',
+      error: error.message
+    });
+  }
+};
+
+
 const eliminarResena = async (req, res) => {
   try {
-    const resena = await Resena.findByIdAndDelete(req.params.id);
-    if (!resena) {
-      return res.status(404).json({ mensaje: 'Reseña no encontrada' });
+    const { id } = req.params;
+    const resenaEliminada = await Resena.findByIdAndDelete(id);
+
+    if (!resenaEliminada) {
+      return res.status(404).json({
+        success: false,
+        mensaje: 'Reseña no encontrada'
+      });
     }
-    res.json({ mensaje: 'Reseña eliminada correctamente' });
+
+    res.json({
+      success: true,
+      data: resenaEliminada,
+      mensaje: 'Reseña eliminada correctamente'
+    });
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al eliminar la reseña' });
+    res.status(500).json({
+      success: false,
+      mensaje: 'Error al eliminar la reseña',
+      error: error.message
+    });
   }
 };
 
 module.exports = {
-  obtenerResenas,
-  obtenerResenaPorId,
   crearResena,
-  actualizarResena,
-  eliminarResena,
+  obtenerResenasPorJuego,
+  eliminarResena
 };
