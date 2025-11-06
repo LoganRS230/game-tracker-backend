@@ -1,22 +1,31 @@
-.principal {
-  padding: 2rem;
-  text-align: center;
+.app-container {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-.encabezado-principal {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-
-.encabezado-principal h1 {
-  font-size: 2.5rem;
+.titulo-app {
+  text-align: center;
+  padding: 2rem 1rem 1rem;
+  background: linear-gradient(90deg, #0f0c29, #302b63, #24243e);
   color: #cddafd;
+  font-size: 2.8rem;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
 }
 
-/* === Slider de modo oscuro === */
+.app-container.oscuro {
+  background-color: #0a0a0a;
+  color: #f0f0f0;
+}
+
+.app-container.oscuro .titulo-app {
+  background: #111;
+  color: #ffffff;
+}
+
+/* Slider */
 .switch {
   position: relative;
   display: inline-block;
@@ -60,19 +69,4 @@ input:checked + .slider {
 
 input:checked + .slider:before {
   transform: translateX(26px);
-}
-
-/* === Modo oscuro === */
-.principal.oscuro {
-  background: #0a0a0a;
-  color: #f0f0f0;
-}
-
-.principal.oscuro h1 {
-  color: #ffffff;
-}
-
-.principal.oscuro .collage-juegos,
-.principal.oscuro .sin-juegos {
-  color: #e0e0e0;
 }

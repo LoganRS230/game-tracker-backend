@@ -1,0 +1,19 @@
+button.completado {
+  margin-top: 0.5rem;
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button.completado.verde {
+  background: linear-gradient(90deg, #00b894, #00cec9);
+  color: #fff;
+}
+
+button.completado.rojo {
+  background: linear-gradient(90deg, #d63031, #e17055);
+  color: #fff;
+}
