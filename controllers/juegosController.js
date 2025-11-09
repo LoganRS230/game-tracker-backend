@@ -55,11 +55,6 @@ const obtenerJuegos = async (req, res) => {
   }
 };
 
-
-
-
-
-
 // GET /api/juegos/:id
 const mongoose = require('mongoose');
 
@@ -91,9 +86,34 @@ const obtenerJuegoPorId = async (req, res) => {
   }
 };
 
+// GET /api/juegos/desarrollador/:nombre
+const obtenerJuegosPorDesarrollador = async (req, res) => {
+  try {
+    const { nombre } = req.params;
+    const juegos = await Juego.find({ desarrollador: { $regex: new RegExp(nombre, 'i') } });
 
+    if (juegos.length === 0) {
+      return res.status(404).json({
+        success: false,
+        mensaje: 'No se encontraron juegos con ese desarrollador'
+      });
+    }
 
+    res.json({
+      success: true,
+      data: juegos,
+      mensaje: 'Juegos encontrados por desarrollador'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      mensaje: 'Error al buscar juegos por desarrollador',
+      error: error.message
+    });
+  }
+};
 
+// GET /api/juegos/titulo/:nombre
 const obtenerJuegosPorTitulo = async (req, res) => {
   try {
     const { nombre } = req.params;
@@ -280,6 +300,7 @@ const eliminarJuego = async (req, res) => {
 module.exports = {
   obtenerJuegos,
   obtenerJuegoPorId,
+  obtenerJuegosPorDesarrollador,
   obtenerJuegosPorTitulo,
   crearJuego,
   actualizarJuego,
