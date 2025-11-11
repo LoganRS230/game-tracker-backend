@@ -283,10 +283,13 @@ const eliminarJuego = async (req, res) => {
       });
     }
 
+    // Eliminar también todas las reseñas asociadas a este juego
+    await Resena.deleteMany({ juegoId: id });
+
     res.json({
       success: true,
       data: juegoEliminado,
-      mensaje: 'Juego eliminado correctamente'
+      mensaje: 'Juego y sus reseñas eliminados correctamente'
     });
   } catch (error) {
     res.status(500).json({
