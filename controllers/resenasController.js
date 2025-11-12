@@ -36,6 +36,25 @@ const crearResena = async (req, res) => {
 };
 
 
+const obtenerTodasResenas = async (req, res) => {
+  try {
+    const resenas = await Resena.find().sort({ fecha: -1 });
+
+    res.json({
+      success: true,
+      data: resenas,
+      mensaje: 'Todas las reseñas obtenidas correctamente'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      mensaje: 'Error al obtener reseñas',
+      error: error.message
+    });
+  }
+};
+
+
 const obtenerResenasPorJuego = async (req, res) => {
   try {
     const { juegoId } = req.params;
@@ -50,6 +69,53 @@ const obtenerResenasPorJuego = async (req, res) => {
     res.status(500).json({
       success: false,
       mensaje: 'Error al obtener reseñas',
+      error: error.message
+    });
+  }
+};
+
+
+const actualizarResena = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { comentario, puntuacion } = req.body;
+
+    if (!comentario || !puntuacion) {
+      return res.status(400).json({
+        success: false,
+        mensaje: 'Faltan campos obligatorios'
+      });
+    }
+
+    if (puntuacion < 1 || puntuacion > 5) {
+      return res.status(400).json({
+        success: false,
+        mensaje: 'La puntuación debe estar entre 1 y 5'
+      });
+    }
+
+    const resenaActualizada = await Resena.findByIdAndUpdate(
+      id,
+      { comentario, puntuacion },
+      { new: true, runValidators: true }
+    );
+
+    if (!resenaActualizada) {
+      return res.status(404).json({
+        success: false,
+        mensaje: 'Reseña no encontrada'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: resenaActualizada,
+      mensaje: 'Reseña actualizada correctamente'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      mensaje: 'Error al actualizar la reseña',
       error: error.message
     });
   }
@@ -84,6 +150,8 @@ const eliminarResena = async (req, res) => {
 
 module.exports = {
   crearResena,
+  obtenerTodasResenas,
   obtenerResenasPorJuego,
+  actualizarResena,
   eliminarResena
 };
